@@ -1,0 +1,32 @@
+<template>
+    <lightning-card variant="Narrow" title="List Opportunity from Datatable" icon-name="standard:opportunity">
+        <div class="slds-var-m-around_medium">
+            <lightning-button
+              label="Create new Opportunity"
+              onclick={handleShowModal}
+            ></lightning-button>
+            <c-modal-Popup> </c-modal-Popup>
+        </div>
+        
+        <div>
+            <lightning-datatable class="slds-max-medium-table_stacked"
+                if:true={opportunities.data} 
+                key-field="id" 
+                data={opportunities.data}
+                show-row-number-column 
+                hide-checkbox-column 
+                columns={opportunityCols}
+                onsave={saveHandleAction}
+                draft-values={fldsItemValues}
+                >
+            </lightning-datatable>
+        </div>
+
+        <!-- 子から親をコール　（確認要） -->
+        <c-modal-Popup
+            class="slds-show slds-is-relative"
+            onhandlesuccess={ReloadPag}>
+        </c-modal-Popup>
+
+    </lightning-card>
+</template>
