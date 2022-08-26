@@ -42,7 +42,9 @@ export default class ContactList extends LightningElement {
 
             const recordInput = { fields };
 
-            console.log('1_ recordInput'+recordInput);
+            //Debug log
+            console.log('value of recordInput is : '+JSON.stringify(recordInput));
+            
             updateRecord(recordInput)
                 .then(() => {
                     this.dispatchEvent(

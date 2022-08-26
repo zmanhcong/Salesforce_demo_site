@@ -5,7 +5,7 @@ public with sharing class OpportunityList{
             SELECT Name, StageName, Amount, CloseDate, Description 
             FROM Opportunity 
             WHERE Name LIKE '%mnc%' ORDER BY ID ASC
-            LIMIT 10 
+            
         ];
     }
 

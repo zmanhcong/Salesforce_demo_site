@@ -8,19 +8,27 @@
             <c-modal-Popup> </c-modal-Popup>
         </div>
         
+        <lightning-input class="searchbar"
+                            label="Search"
+                            value={keyword}
+                            onchange={handleKeywordOnchange}>
+        </lightning-input>
+
         <div>
             <lightning-datatable class="slds-max-medium-table_stacked"
-                if:true={opportunities.data} 
-                key-field="id" 
-                data={opportunities.data}
+                if:true={opportunities} 
+                key-field="Id" 
+                data={opportunities}
                 show-row-number-column 
                 hide-checkbox-column 
                 columns={opportunityCols}
                 onsave={saveHandleAction}
                 draft-values={fldsItemValues}
+                onrowaction={handleRowAction}
                 >
             </lightning-datatable>
         </div>
+
 
         <!-- 子から親をコール　（確認要） -->
         <c-modal-Popup
@@ -29,4 +37,21 @@
         </c-modal-Popup>
 
     </lightning-card>
+
+    <div class="slds-m-around_medium">
+        <p class="slds-m-vertical_medium content">
+                {totalRecountCount}件中　{startingRecord}件～{endingRecord}件を表示中。
+                {page}/{totalPage}ページ</p>
+        <lightning-layout>
+            <lightning-layout-item>
+                <lightning-button label="前へ" icon-name="utility:chevronleft" onclick={previousHandler} disabled={isFirstPage}></lightning-button>
+            </lightning-layout-item>
+          <lightning-layout-item flexibility="grow"></lightning-layout-item>
+            <lightning-layout-item>
+                <lightning-button label="次へ" icon-name="utility:chevronright" icon-position="right" onclick={nextHandler} disabled={isLastPage}></lightning-button>
+            </lightning-layout-item>
+      </lightning-layout>
+    </div>
+
+
 </template>
