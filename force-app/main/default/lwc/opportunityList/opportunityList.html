@@ -1,5 +1,6 @@
 <template>
     <lightning-card variant="Narrow" title="List Opportunity from Datatable" icon-name="standard:opportunity">
+        <!-- Modal for create new Opportunity -->
         <div class="slds-var-m-around_medium">
             <lightning-button
               label="Create new Opportunity"
@@ -8,12 +9,11 @@
             <c-modal-Popup> </c-modal-Popup>
         </div>
         
-        <lightning-input class="searchbar"
-                            label="Search"
-                            value={keyword}
-                            onchange={handleKeywordOnchange}>
+        <!-- Realtime search funcrion -->
+        <lightning-input type="search" label="Search"  onchange={handleSearch}>
         </lightning-input>
 
+        <!-- Data table -->
         <div>
             <lightning-datatable class="slds-max-medium-table_stacked"
                 if:true={opportunities} 
@@ -38,6 +38,7 @@
 
     </lightning-card>
 
+        <!-- Pagination ページネーション -->
     <div class="slds-m-around_medium">
         <p class="slds-m-vertical_medium content">
                 {totalRecountCount}件中　{startingRecord}件～{endingRecord}件を表示中。

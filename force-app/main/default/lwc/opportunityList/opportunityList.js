@@ -75,7 +75,30 @@ export default class RefreshApexDelete extends LightningElement {
         console.log('error' + error);
       }
     }
-  
+
+    //Realtime search function
+    searchValue;
+    handleSearch(event){
+        this.searchValue = event.target.value;
+        this.ImperativeCall();
+    }
+
+    ImperativeCall(){
+        getOpportunities({str:this.searchValue})
+        .then ((result) => {     
+            //this.opportunities = result;
+            this.items = result;
+            this.totalRecountCount = result.length;
+            this.totalPage = Math.ceil(this.totalRecountCount/this.pageSize);
+            this.opportunities = this.items.slice(0, this.pageSize);
+            this.endingRecord = this.pageSize;
+            refreshApex(this.opportunities);
+        })
+        .catch((error) =>{
+            console.log('has error'+error);
+        })  
+    }
+
     previousHandler() {
       if(this.page > 1) {
         this.page -= 1;
@@ -141,8 +164,6 @@ export default class RefreshApexDelete extends LightningElement {
         modal.show();
     }
 
-
-
     //Inline edit record (return draft, with each draft -> import inside {})
     saveHandleAction(event) {
         this.fldsItemValues = event.detail.draftValues;
@@ -157,7 +178,8 @@ export default class RefreshApexDelete extends LightningElement {
         console.log('value of inputsItems is : '+JSON.stringify(inputsItems));
         console.log('value of promises is : '+JSON.stringify(promises));
 
-        Promise.all(promises).then(res => {
+        Promise.all(promises)
+        .then(res => {
             this.dispatchEvent(
                 new ShowToastEvent({
                     title: 'Success',
@@ -180,7 +202,6 @@ export default class RefreshApexDelete extends LightningElement {
         });
     }
 
-   
     async refresh() {
         await refreshApex(this.accObj);
     }
