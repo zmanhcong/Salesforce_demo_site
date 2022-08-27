@@ -14,12 +14,16 @@ public with sharing class OpportunityList{
             FROM Opportunity 
             WHERE Name LIKE :name ORDER BY ID ASC
         ];
-        
-        
     }
-
-
-
+   
+    @AuraEnabled(cacheable=true)
+    public static void deleteOpportunity(Opportunity objopp){
+        try {
+            delete objopp;
+        } catch (Exception e) {
+            throw new AuraHandledException(e.getMessage());
+        }
+    }
     // @AuraEnabled(cacheable=true)
     // public static List<Opportunity> serachTestRecord( String serachWord ){
     //     serachWord = serachWord.trim();

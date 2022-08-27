@@ -4,6 +4,9 @@ import { refreshApex } from '@salesforce/apex';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getOpportunities from "@salesforce/apex/OpportunityList.getOpportunities";
 import { updateRecord } from 'lightning/uiRecordApi';
+import { NavigationMixin } from 'lightning/navigation';
+import removeOpportunity from "@salesforce/apex/OpportunityList.deleteOpportunity";
+
 
 const actions = [
   {label: 'View', name:'view'},
@@ -15,12 +18,14 @@ const OPPORTUNITY_COLS = [
 	{
 		label: "Opportunity Name",
 		type: "button",
+    label: "View",
 		typeAttributes: { label: { fieldName: "Name" }, name: "gotoOpportunity", variant: "base" },
         editable: true ,
 	},
 	{
 		label: "Stage",
 		fieldName: "StageName",
+        type:'picklist',
         editable: true,
 	},
 	{
@@ -31,16 +36,17 @@ const OPPORTUNITY_COLS = [
 	},
 	{ label: "Close Date", type: "date", fieldName: "CloseDate",editable: true },
 	{ label: "Description", fieldName: "Description",editable: true, type: "text"  },
-	{
-		label: "Delete",
-		type: "button",
-		typeAttributes: {
-			label: "Delete",
-			name: "deleteOpportunity",
-			variant: "destructive"
-		},
-	},
+	// {
+	// 	label: "Delete",
+	// 	type: "button",
+	// 	typeAttributes: {
+	// 		label: "Delete",
+	// 		name: "deleteOpportunity",
+	// 		variant: "destructive"
+	// 	},
+	// },
   {
+    label: "Actions",
     type: "action",
 		typeAttributes: {
       rowActions:actions,
@@ -51,7 +57,7 @@ const OPPORTUNITY_COLS = [
 
 
 
-export default class Mainfunction extends LightningElement {
+export default class Mainfunction extends NavigationMixin (LightningElement) {
 	opportunityCols = OPPORTUNITY_COLS;
 
     //@wire(getOpportunities, {})
@@ -141,30 +147,6 @@ export default class Mainfunction extends LightningElement {
     }
 
 
-    //Delete record
-	handleRowAction(event) {
-		if (event.detail.action.name === "deleteOpportunity") {
-			deleteRecord(event.detail.row.Id).then(() => {
-				refreshApex(this.opportunities);
-				this.dispatchEvent(
-					new ShowToastEvent({
-						title: 'Success',
-						message: "Record deleted successfully!",
-						variant: 'success'
-					})
-				);
-			}).catch((error) => {
-				console.log("error, " + error);
-				this.dispatchEvent(
-					new ShowToastEvent({
-						title: 'Error deleting record',
-						message: error.body.message,
-						variant: 'error'
-					})
-				);
-			})
-		}
-	}
 
     // 子から親をコール　（確認要） 
     ReloadPag() {
@@ -218,7 +200,6 @@ export default class Mainfunction extends LightningElement {
     
     async refresh() {
         await refreshApex(this.opportunities);
-        console.log('value of opportunities is : '+opportunities);
     }
     
 
@@ -264,10 +245,98 @@ export default class Mainfunction extends LightningElement {
 
   handleRowAction(event){
     const actionName = event.detail.action.name;
-    console.log('Event action name', actionName);
+    //console.log('Event action name', actionName);
     const row = event.detail.row;
+    switch(actionName){
+      case 'view':
+          this[NavigationMixin.Navigate]({
+            type:'standard__recordPage',
+            attributes:{
+              recordId:row.Id,
+              actionName:'view',
+              abjectApiName:'Opportunity'
+            }
+          });
+          break;
+      case 'edit':
+        this[NavigationMixin.Navigate]({
+          type:'standard__recordPage',
+          attributes:{
+            recordId:row.Id,
+            actionName:'edit',
+            abjectApiName:'Opportunity'
+          }
+        });
+        break;
+    
+    case 'delete':
+        //this.removeOpportunity(row);
+
+        deleteRecord(event.detail.row.Id).then(() => {
+          refreshApex(this.opportunities);
+          this.dispatchEvent(
+            new ShowToastEvent({
+              title: 'Success',
+              message: "Record deleted successfully!",
+              variant: 'success'
+            })
+          );
+        }).catch((error) => {
+          console.log("error, " + error);
+          this.dispatchEvent(
+            new ShowToastEvent({
+              title: 'Error deleting record',
+              message: error.body.message,
+              variant: 'error'
+            })
+          );
+        })
+        break;
+    }
   }
 
+  // removeOpportunity(currentRow){
+  //   removeOpportunity({objopp:currentRow})
+  //     .then((result)=>{
+  //       this.dispatchEvent(new ShowToastEvent({
+  //         title:'Success',
+  //         message:'Opportunity deleted',
+  //         variant:'success'
+  //       }))
+  //     })
+  //     .catch((error)=>{
+  //       this.dispatchEvent(new ShowToastEvent({
+  //         title:'Error!!!',
+  //         message:error,
+  //         variant:'error'
+  //       }))
+  //     })
+  // }
 
+  
+    //Delete record
+	// handleRowAction(event) {
+	// 	if (event.detail.action.name === "deleteOpportunity") {
+	// 		deleteRecord(event.detail.row.Id).then(() => {
+	// 			refreshApex(this.opportunities);
+	// 			this.dispatchEvent(
+	// 				new ShowToastEvent({
+	// 					title: 'Success',
+	// 					message: "Record deleted successfully!",
+	// 					variant: 'success'
+	// 				})
+	// 			);
+	// 		}).catch((error) => {
+	// 			console.log("error, " + error);
+	// 			this.dispatchEvent(
+	// 				new ShowToastEvent({
+	// 					title: 'Error deleting record',
+	// 					message: error.body.message,
+	// 					variant: 'error'
+	// 				})
+	// 			);
+	// 		})
+	// 	}
+	// }
 
-}
+} 
