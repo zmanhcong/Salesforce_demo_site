@@ -5,7 +5,13 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import getOpportunities from "@salesforce/apex/OpportunityList.getOpportunities";
 import { updateRecord } from 'lightning/uiRecordApi';
 
+const actions = [
+  {label: 'View', name:'view'},
+  {label: 'Edit', name:'edit'},
+  {label: 'Delete', name:'delete'},
+]
 const OPPORTUNITY_COLS = [
+  
 	{
 		label: "Opportunity Name",
 		type: "button",
@@ -33,19 +39,27 @@ const OPPORTUNITY_COLS = [
 			name: "deleteOpportunity",
 			variant: "destructive"
 		},
-	}
+	},
+  {
+    type: "action",
+		typeAttributes: {
+      rowActions:actions,
+      menuAligment:'right'
+     }
+	},
 ];
 
-export default class RefreshApexDelete extends LightningElement {
+
+
+export default class Mainfunction extends LightningElement {
 	opportunityCols = OPPORTUNITY_COLS;
 
-	//@wire(getOpportunities, {})
-	opportunities = [];
+    //@wire(getOpportunities, {})
+    opportunities = [];
     saveDraftValues = [];
 
     //Pagination
     //@api recordId;
-    //opportunities = [];
     page = 1; 
     items = []; 
     //columns = OPPORTUNITY_COLS; 
@@ -150,7 +164,6 @@ export default class RefreshApexDelete extends LightningElement {
 				);
 			})
 		}
-        
 	}
 
     // 子から親をコール　（確認要） 
@@ -183,13 +196,14 @@ export default class RefreshApexDelete extends LightningElement {
             this.dispatchEvent(
                 new ShowToastEvent({
                     title: 'Success',
-                    message: 'Records Updated Successfully!!',
+                    message: 'Opportunity Updated Successfully!!',
                     variant: 'success'
                 })
             );
             this.fldsItemValues = [];
             return this.refresh();
-        }).catch(error => {
+          }
+        ).catch(error => {
             this.dispatchEvent(
                 new ShowToastEvent({
                     title: 'Error',
@@ -201,9 +215,59 @@ export default class RefreshApexDelete extends LightningElement {
             this.fldsItemValues = [];
         });
     }
-
+    
     async refresh() {
-        await refreshApex(this.accObj);
+        await refreshApex(this.opportunities);
+        console.log('value of opportunities is : '+opportunities);
     }
+    
+
+  //   async saveHandleAction(event) {
+  //     // Convert datatable draft values into record objects
+  //     const records = event.detail.draftValues.slice().map((draftValue) => {
+  //         const fields = Object.assign({}, draftValue);
+  //         return { fields };
+  //     });
+
+  //     // Clear all datatable draft values
+  //     this.draftValues = [];
+
+  //     try {
+  //         // Update all records in parallel thanks to the UI API
+  //         const recordUpdatePromises = records.map((record) =>
+  //             updateRecord(record)
+  //         );
+  //         await Promise.all(recordUpdatePromises);
+
+  //         // Report success with a toast
+  //         this.dispatchEvent(
+  //             new ShowToastEvent({
+  //                 title: 'Success',
+  //                 message: 'opportunity updated',
+  //                 variant: 'success'
+  //             })
+  //         );
+
+  //         // Display fresh data in the datatable
+  //         await refreshApex(this.opportunities);
+  //     } catch (error) {
+  //         this.dispatchEvent(
+  //             new ShowToastEvent({
+  //                 title: 'Error updating or reloading opportunity',
+  //                 message: error.body.message,
+  //                 variant: 'error'
+  //             })
+  //         );
+  //     }
+  // }
+
+
+  handleRowAction(event){
+    const actionName = event.detail.action.name;
+    console.log('Event action name', actionName);
+    const row = event.detail.row;
+  }
+
+
 
 }
