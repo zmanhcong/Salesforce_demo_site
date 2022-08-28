@@ -61,7 +61,7 @@ export default class Mainfunction extends NavigationMixin (LightningElement) {
 	opportunityCols = OPPORTUNITY_COLS;
 
     //@wire(getOpportunities, {})
-    opportunities = [];
+    opportunities;
     saveDraftValues = [];
 
     //Pagination
@@ -182,6 +182,21 @@ export default class Mainfunction extends NavigationMixin (LightningElement) {
                     variant: 'success'
                 })
             );
+            getOpportunities({str:'', ntime:Date.now()}).then(data=> {
+              if(data) {
+                this.items = data;
+                this.totalRecountCount = data.length;
+                this.totalPage = Math.ceil(this.totalRecountCount/this.pageSize);
+                this.opportunities = this.items.slice(0, this.pageSize);
+                this.endingRecord = this.pageSize;
+
+                refreshApex(this.opportunities);
+              } else if(error) {
+                console.log('error' + error);
+              }
+            }).
+            catch()
+
             this.fldsItemValues = [];
             return this.refresh();
           }
@@ -272,25 +287,71 @@ export default class Mainfunction extends NavigationMixin (LightningElement) {
     case 'delete':
         //this.removeOpportunity(row);
 
-        deleteRecord(event.detail.row.Id).then(() => {
-          refreshApex(this.opportunities);
-          this.dispatchEvent(
-            new ShowToastEvent({
-              title: 'Success',
-              message: "Record deleted successfully!",
-              variant: 'success'
-            })
-          );
-        }).catch((error) => {
-          console.log("error, " + error);
-          this.dispatchEvent(
-            new ShowToastEvent({
-              title: 'Error deleting record',
-              message: error.body.message,
-              variant: 'error'
-            })
-          );
+        // deleteRecord(event.detail.row.Id).then(() => {
+        //   refreshApex(this.opportunities);
+        //   this.dispatchEvent(
+        //     new ShowToastEvent({
+        //       title: 'Success',
+        //       message: "Record deleted successfully!",
+        //       variant: 'success'
+        //     })
+        //   );
+        //   return refreshApex(this.opportunities);
+        // }).catch((error) => {
+        //   console.log("error, " + error);
+        //   this.dispatchEvent(
+        //     new ShowToastEvent({
+        //       title: 'Error deleting record',
+        //       message: error.body.message,
+        //       variant: 'error'
+        //     })
+        //   );
+        // })
+        // break;
+
+        console.log("event.detail.row", JSON.stringify(event.detail.row.Id));
+        removeOpportunity({id: event.detail.row.Id})
+        .then(result => {               
+            this.dispatchEvent( 
+                new ShowToastEvent({
+                    title: 'Success',
+                    message: 'OPP was deleted!',
+                    variant: 'success',
+                }),
+            );    
+            getOpportunities({str:'', ntime:Date.now()}).then(data=> {
+              console.log('promise get opp');
+              if(data) {
+                this.items = data;
+                this.totalRecountCount = data.length;
+                this.totalPage = Math.ceil(this.totalRecountCount/this.pageSize);
+                this.opportunities = this.items.slice(0, this.pageSize);
+                this.endingRecord = this.pageSize;
+
+                console.log("opportunities list is : ", JSON.stringify(this.opportunities));
+                console.log("promise get data : ", JSON.stringify(this.items));
+
+                refreshApex(this.opportunities);
+              } else if(error) {
+                console.log('error' + error);
+              }
+            }).catch()
+
+           
+    
         })
+        .catch(error => {
+            this.message = undefined;
+            this.error = error;
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: 'Error creating records',
+                    message: 'error',
+                    variant: 'error',
+                }),
+            );
+            console.log("error", JSON.stringify(this.error));
+        });
         break;
     }
   }

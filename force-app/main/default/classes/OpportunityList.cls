@@ -16,14 +16,16 @@ public with sharing class OpportunityList{
         ];
     }
    
-    @AuraEnabled(cacheable=true)
-    public static void deleteOpportunity(Opportunity objopp){
+    @AuraEnabled
+    public static void deleteOpportunity(Id id){
         try {
-            delete objopp;
+            Opportunity opp = [SELECT Id FROM Opportunity WHERE Id =:id];
+            delete opp;
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
     }
+
     // @AuraEnabled(cacheable=true)
     // public static List<Opportunity> serachTestRecord( String serachWord ){
     //     serachWord = serachWord.trim();
