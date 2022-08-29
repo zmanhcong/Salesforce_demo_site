@@ -1,16 +1,19 @@
 <template>
     <lightning-card variant="Narrow" title="List Opportunity from Datatable" icon-name="standard:opportunity">
         <!-- Modal for create new Opportunity -->
-        <div class="slds-var-m-around_medium">
-            <lightning-button
-              label="Create new Opportunity"
-              onclick={handleShowModal}
-            ></lightning-button>
-            <c-modal-Popup> </c-modal-Popup>
+        <div>
+            <div class="slds-var-m-around_medium " style="float:left">
+                <lightning-button
+                label="Create new Opportunity"
+                onclick={handleShowModal}
+                ></lightning-button>
+                <c-modal-Popup> </c-modal-Popup>
+            </div>
+            <div style="margin:5px; width: 120px">
+                <!-- Realtime search funcrion -->
+                <lightning-input type="search" class="slds-m-bottom_small"   label="Search"  onchange={handleSearch}></lightning-input>
+            </div>
         </div>
-        
-        <!-- Realtime search funcrion -->
-        <lightning-input type="search" class="slds-m-bottom_small"  label="Search"  onchange={handleSearch}></lightning-input>
 
         <!-- Data table -->
         <div>
@@ -30,10 +33,10 @@
 
 
         <!-- 子から親をコール　（確認要） -->
-        <c-modal-Popup
+        <!-- <c-modal-Popup
             class="slds-show slds-is-relative"
             onhandlesuccess={ReloadPag}>
-        </c-modal-Popup>
+        </c-modal-Popup> -->
 
     </lightning-card>
 
@@ -44,11 +47,13 @@
                 {page}/{totalPage}ページ</p>
         <lightning-layout>
             <lightning-layout-item>
-                <lightning-button label="前へ" icon-name="utility:chevronleft" onclick={previousHandler} disabled={isFirstPage}></lightning-button>
+                <lightning-button label="最初" icon-name="utility:chevronleft" onclick={firstHandler} disabled={isFirstPage} style="margin-right: 15px;"></lightning-button>
+                <lightning-button label="前へ"  onclick={previousHandler} disabled={isFirstPage}></lightning-button>
             </lightning-layout-item>
           <lightning-layout-item flexibility="grow"></lightning-layout-item>
             <lightning-layout-item>
-                <lightning-button label="次へ" icon-name="utility:chevronright" icon-position="right" onclick={nextHandler} disabled={isLastPage}></lightning-button>
+                <lightning-button label="次へ"  icon-position="right" onclick={nextHandler} disabled={isLastPage}></lightning-button>
+                <lightning-button label="最終" icon-name="utility:chevronright" icon-position="right" onclick={lastHandler} disabled={isLastPage} style="margin-left: 15px;"></lightning-button>
             </lightning-layout-item>
       </lightning-layout>
     </div>

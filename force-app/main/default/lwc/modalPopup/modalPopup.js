@@ -18,33 +18,20 @@ export default class Modal extends LightningElement {
   }
 
   objectApiName = OPPORTUNITY_OBJECT;
-    fields = [NAME_FIELD, STAGENAME_FIELD, CLOSEDATE_FIELD];
-    
-    //Reload page when created new a opportunity.
-    @wire(getOpportunities, {})
-    opportunities;
+  fields = [NAME_FIELD, STAGENAME_FIELD, CLOSEDATE_FIELD];
+  
+  //Reload page when created new a opportunity.
+  @wire(getOpportunities, {})
+  opportunities;
 
-
-    handlesuccess(event) {
-        const toastEvent = new ShowToastEvent({
-            title: "Opportunity created",
-            message: "Record ID: " + event.detail.id,
-            variant: "success"
-        });
-        refreshApex(this.opportunities);
-        
-        //this.updateRecordView();
-        this.dispatchEvent(toastEvent);
-        
-        
-    }
-
-    //Reload page, but not work -> confirm.
-
-    // updateRecordView() {
-    //       setTimeout(() => {
-    //             eval("$A.get('e.force:refreshView').fire();");
-    //       }, 1000); 
-    //     }
+  handlesuccess(event) {
+      const toastEvent = new ShowToastEvent({
+          title: "Opportunity created",
+          message: "Record ID: " + event.detail.id,
+          variant: "success"
+      });
+      refreshApex(this.opportunities);
+      this.dispatchEvent(toastEvent);
+  }
       
 }

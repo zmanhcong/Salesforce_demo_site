@@ -14,7 +14,6 @@ const actions = [
   {label: 'Delete', name:'delete'},
 ]
 const OPPORTUNITY_COLS = [
-  
 	{
 		label: "Opportunity Name",
 		type: "button",
@@ -60,15 +59,13 @@ const OPPORTUNITY_COLS = [
 export default class Mainfunction extends NavigationMixin (LightningElement) {
 	opportunityCols = OPPORTUNITY_COLS;
 
-    //@wire(getOpportunities, {})
     opportunities;
     saveDraftValues = [];
 
     //Pagination
     //@api recordId;
     page = 1; 
-    items = []; 
-    //columns = OPPORTUNITY_COLS; 
+    items = [];
     startingRecord = 1; 
     endingRecord = 0; 
     pageSize = 5; 
@@ -82,7 +79,7 @@ export default class Mainfunction extends NavigationMixin (LightningElement) {
     get isLastPage() {
       return this.page === this.totalPage;
     }
-  
+
     @wire(getOpportunities)
     wiredOpportunity({data, error}) {
       if(data) {
@@ -105,8 +102,7 @@ export default class Mainfunction extends NavigationMixin (LightningElement) {
 
     ImperativeCall(){
         getOpportunities({str:this.searchValue})
-        .then ((result) => {     
-            //this.opportunities = result;
+        .then ((result) => {
             this.items = result;
             this.totalRecountCount = result.length;
             this.totalPage = Math.ceil(this.totalRecountCount/this.pageSize);
@@ -119,7 +115,7 @@ export default class Mainfunction extends NavigationMixin (LightningElement) {
         })  
     }
 
-    previousHandler() {
+    previousHandler(){
       if(this.page > 1) {
         this.page -= 1;
         this.changePageHandler(this.page);
@@ -131,6 +127,16 @@ export default class Mainfunction extends NavigationMixin (LightningElement) {
         this.page += 1;
         this.changePageHandler(this.page);
       }
+    }
+      
+    firstHandler(){
+      this.page = 1;
+      this.changePageHandler(this.page);
+    }
+
+    lastHandler(){
+      this.page = this.totalPage;
+      this.changePageHandler(this.page);
     }
   
     changePageHandler(page) {
